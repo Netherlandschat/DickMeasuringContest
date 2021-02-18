@@ -14,8 +14,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'nl.thedutchmc:netherlandsbot-core:0.0.8.1'
-    //implementation 'com.github.Netherlandschat:Core:0.0.8'
+    //Dev only:
+    //implementation 'nl.thedutchmc:netherlandsbot-core:0.0.8.1'
+    
+    //Prod
+    implementation 'com.github.Netherlandschat:Core:0.0.8.1'
     compile ('net.dv8tion:JDA:4.2.0_228') {
         exclude module: 'opus-java'
     }
