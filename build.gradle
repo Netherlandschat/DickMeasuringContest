@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+}
+
+version = '1.0.0'
+group = 'nl.thedutchmc'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+	maven { url 'https://jitpack.io' }    
+}
+
+dependencies {
+    implementation 'nl.thedutchmc:netherlandsbot-core:0.0.8.1'
+    //implementation 'com.github.Netherlandschat:Core:0.0.8'
+    compile ('net.dv8tion:JDA:4.2.0_228') {
+        exclude module: 'opus-java'
+    }
+}
+
+task ghActions(type: Jar) {	
+	description 'GitHub Actions Task. Do not use in regular development!'
+	version = ''
+	archiveClassifier = ''
+	archiveBaseName = 'output'
+	
+	from sourceSets.main.output
+	
+	destinationDirectory = file("$rootDir/actions")
+}
