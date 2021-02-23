@@ -24,6 +24,16 @@ dependencies {
     }
 }
 
+task dockerBuild(type: Jar) {
+	description 'Task used for Docker builds'
+	version = ''
+	archiveClassifier = ''
+	archiveBaseName = 'DickMeasuringContest'
+	
+	from sourceSets.main.output
+}
+
+
 task ghActions(type: Jar) {	
 	description 'GitHub Actions Task. Do not use in regular development!'
 	version = ''

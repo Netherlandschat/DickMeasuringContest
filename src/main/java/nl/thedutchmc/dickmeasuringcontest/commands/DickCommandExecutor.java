@@ -1,6 +1,5 @@
 package nl.thedutchmc.dickmeasuringcontest.commands;
 
-
 import net.dv8tion.jda.api.entities.Member;
 import nl.thedutchmc.netherlandsbot.commands.CommandData;
 import nl.thedutchmc.netherlandsbot.commands.ModuleCommandListener;
@@ -9,26 +8,51 @@ public class DickCommandExecutor extends ModuleCommandListener {
 	
 	@Override
 	public void onCommand(CommandData commandData) {
-		Member target;
-		if(commandData.getArguments().length != 0) {
+		String username = "";
+		String effectiveName = "";
+		long id = 0L;
+		int disc = 0;
+		switch(commandData.getArguments().length) {
+		case 0:
+			id = commandData.getMember().getIdLong();
+			username = commandData.getMember().getUser().getName();
+			Integer.valueOf(commandData.getMember().getUser().getDiscriminator().replace("#", ""));
+			effectiveName = commandData.getMember().getEffectiveName();
+			
+			break;
+		default:
 			String potentialMention = commandData.getArgumentsRaw()[0];			
 			
-			Member m = commandData.getGuild().retrieveMemberById(potentialMention.substring(3).replace(">", "")).complete();
+			if(!potentialMention.substring(3).replace(">", "").matches("[0-9]+")) {
+				commandData.getChannel().sendMessage("That is not a valid user!").queue();
+				return;
+			}
+			
+			Member m = null;
+			try {
+				m = commandData.getGuild().retrieveMemberById(potentialMention.substring(3).replace(">", "")).complete();
+			} catch(Exception e) {
+				//Something went wrong fetching the member				
+				username = potentialMention = commandData.getArguments()[0];
+				id = Long.valueOf(potentialMention.substring(3).replace(">", ""));
+				disc = 0001;
+				
+				break;
+			}
+			
 			if(m == null) {
 				commandData.getChannel().sendMessage("I couldn't find that user!").queue();
 				return;
 			}
 			
-			target = m;
-		} else {
-			target = commandData.getMember();
+			id = m.getIdLong();
+			username = m.getUser().getName();
+			Integer.valueOf(m.getUser().getDiscriminator().replace("#", ""));
+			potentialMention = m.getEffectiveName();
+			
+			break;
 		}
-		
-		//Get some values about the user
-        long id = target.getIdLong();
-        String username = target.getUser().getName();
-        int disc = Integer.valueOf(target.getUser().getDiscriminator().replace("#", ""));
-        
+	        
         //Funny bitshifting
 		long shiftedRight = id >> 15;
 		long shiftedLeft = id << 7;
@@ -73,7 +97,7 @@ public class DickCommandExecutor extends ModuleCommandListener {
 		dickStr += "D";
 		
 		String message = String.format("**%s's size:**\n"
-				+ dickStr, target.getEffectiveName());
+				+ dickStr, effectiveName);
 		
 		commandData.getChannel().sendMessage(message).queue();
 	}
